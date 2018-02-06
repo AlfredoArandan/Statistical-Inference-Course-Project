@@ -1,0 +1,65 @@
+---
+title: "Statistical Inference Course Project"
+author: "Alfredo Aranda N."
+date: "5 de febrero de 2018"
+output: html_document
+---
+
+# Set the simulation variables lambda, exponentials, and seed.
+```{r read, echo=TRUE}
+# set seed for reproducability
+set.seed(2016)
+
+# Set sampling values as described in the project instructions
+lambda <- 0.2   # lambda
+n <- 40         # number of exponentials
+sims <- 1000    # number of simulations
+
+#Run simulations
+sim_exp <- replicate(sims, rexp(n, lambda))
+
+#Calc the means of the exponential simulations
+means_exp <- apply(sim_exp, 2, mean)
+
+#Histogram of the means
+hist(means_exp, breaks=40, xlim = c(2,9), main="Exponential Function Simulation Means", col = "aliceblue")
+plot(rexp(10000,lambda), pch=20, cex=0.6, main="The exponential distribution with rate 0.2 and 10.000 observations")
+```
+
+
+# Question 1 - Sample Mean vs Theoretical Mean
+## The mean of the exponential distribution is 1/lambda. In this case, lambda is 0.2. Therefore, the theoretical mean should result as 5 (i.e. 1 / 0.2). Let's see if that holds true.
+```{s study, echo=TRUE}
+# plot histogram of the sample means
+hist(means_exp, col="aliceblue", main="Theoretical Mean vs. Actual Mean", xlim = c(2,9),breaks=40, xlab = "Simulation Means")
+
+# plot a vertical red line at the mean of the sample means
+abline(v=mean(means_exp), lwd="4", col="red")
+
+# determine the mean of our sample means
+mean(means_exp)
+```
+
+
+# Question 2 - Sample Variance vs Theoretical Variance
+## The standard deviation of the exponential distribution is (1/lambda) / sqrt(n). Next, we’ll see if this matches our simulations.
+```{q question, echo=TRUE}
+# theoretical standard deviation vs. simulation standard deviation
+print(paste("Theoretical standard deviation: ", round( (1/lambda)/sqrt(n) ,4)))
+print(paste("Practical standard deviation: ", round(sd(means_exp) ,4))) 
+print(paste("Theoretical variance: ", round( ((1/lambda)/sqrt(n))^2 ,4)))
+print(paste("Practical variance: ", round(sd(means_exp)^2 ,4))) 
+hist(means_exp, col="darkblue", main="Theoretical vs actual mean for rexp()", breaks=20)
+abline(v=mean(means_exp), lwd="4", col="red")
+```
+### The formulas above show us that the variances are very close.
+
+# Question 3 - Distribution
+## Finally, we’ll investigate whether the exponential distribution is approximately normal. Due to the Central Limit Theorem, the means of the sample simulations should follow a normal distribution.
+
+```{fi final, echo=TRUE}
+#General Plot with ditribution curve drawn
+hist(means_exp, prob=TRUE, col="lightblue", main="mean distribution for rexp()", breaks=20)
+lines(density(means_exp), lwd=3, col="blue")
+```
+
